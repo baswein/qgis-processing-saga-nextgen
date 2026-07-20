@@ -9,12 +9,12 @@
 [general]
 name=Processing Saga NextGen Provider
 qgisMinimumVersion=3.22
+qgisMaximumVersion=4.99
+
 description=A Processing provider for modern SAGA releases
 version=1.1.0
 author=North Road
 email=nyall@north-road.com
-
-supportsQt6=yes
 
 about=<p>Processing provider for SAGA 9.2 and above. Requires manual installation of SAGA binaries.</p>
     <p>Since QGIS 3.30 SAGA tools are no included in the standard QGIS installation. In order to use SAGA
