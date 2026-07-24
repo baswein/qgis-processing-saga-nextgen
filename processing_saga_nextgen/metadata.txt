@@ -13,7 +13,7 @@ qgisMaximumVersion=4.99
 
 description=A Processing provider for modern SAGA releases
 version=1.2.0
-author=North Road
+author=Victor Olaya, North Road, Baswein, and QGIS Maintainers
 email=baswein@gmail.com
 
 about=<p>Processing provider for SAGA 9.2 and above. Requires manual installation of SAGA binaries.</p>
