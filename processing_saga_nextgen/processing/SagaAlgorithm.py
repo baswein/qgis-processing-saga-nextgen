@@ -171,12 +171,16 @@ class SagaAlgorithm(SagaAlgorithmBase):
                 )
             )
 
-        if version < SagaUtils.REQUIRED_VERSION:
+        if SagaUtils.parse_version(version) < SagaUtils.parse_version(SagaUtils.REQUIRED_VERSION):
             feedback.reportError(
                 self.tr(
                     "Problem with SAGA installation: unsupported SAGA version (found: {}, required: >={})."
                 ).format(version, SagaUtils.REQUIRED_VERSION)
             )
+        else:
+            feedback.pushInfo(
+                self.tr("SAGA version {} found").format(version)
+            )    
 
         commands = []
         self.exportedLayers = {}

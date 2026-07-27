@@ -35,7 +35,13 @@ class SagaUtils:
     SAGA processing utilities
     """
 
-    REQUIRED_VERSION = "9.2."
+    REQUIRED_VERSION = "9.2.0"
+
+    @staticmethod
+    def parse_version(v):
+        if not v:
+            return ()
+        return tuple(int(x) for x in v.rstrip('.').split('.') if x.isdigit())
 
     SAGA_FOLDER = "SAGA_FOLDER"
     SAGA_LOG_COMMANDS = "SAGANG_LOG_COMMANDS"
