@@ -74,7 +74,12 @@ class SagaUtils:
                     # temp file will be opened and closed, this throws an exception if it fails for some reason (e.g. missing permissions)
                     # we thus know the path is writable now, so use it
                     batchfile = os.path.join(intermediateDir, filename)
-            except:  # pylint:disable=bare-except
+            except Exception as e:
+                QgsMessageLog.logMessage(
+                    f"Could not write to specified SAGA intermediate output directory '{intermediateDir}': {e}. Using default directory instead.",
+                    "Processing",
+                    Qgis.MessageLevel.Warning,
+                )
                 # cannot write to specified directory, use default
                 batchfile = os.path.join(userFolder(), filename)
         else:
@@ -208,7 +213,12 @@ class SagaUtils:
                     return None
                 except IOError:
                     retries += 1
-                except:  # noqa  # pylint:disable=bare-except
+                except Exception as e:
+                    QgsMessageLog.logMessage(
+                        f"Failed to determine installed SAGA version: {e}",
+                        "Processing",
+                        Qgis.MessageLevel.Warning,
+                    )
                     return None
 
         return SagaUtils._installed_version
@@ -242,8 +252,9 @@ class SagaUtils:
                     if "%" in line:
                         s = "".join([x for x in line if x.isdigit()])
                         try:
-                            feedback.setProgress(int(s))
-                        except:  # noqa   # pylint:disable=bare-except
+                            if feedback:
+                                feedback.setProgress(int(s))
+                        except (ValueError, TypeError, AttributeError):
                             pass
                     else:
                         line = line.strip()
@@ -252,8 +263,11 @@ class SagaUtils:
 
                         loglines.append(line)
                         feedback.pushConsoleInfo(line)
-            except:  # noqa  # pylint:disable=bare-except
-                pass
+            except Exception as e:
+                if feedback:
+                    feedback.pushConsoleInfo(
+                        f"Warning: Interrupted while reading SAGA output: {e}"
+                    )
 
         if ProcessingConfig.getSetting(SagaUtils.SAGA_LOG_CONSOLE):
             QgsMessageLog.logMessage(
