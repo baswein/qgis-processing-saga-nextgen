@@ -177,19 +177,16 @@ class SagaUtils:
         if SagaUtils._installedVersionFound and not runSaga:
             return SagaUtils._installed_version
 
-        if isWindows():
-            commands = [os.path.join(SagaUtils.sagaPath(), "saga_cmd.exe"), "-v"]
-        elif isMac() or platform.system() == "FreeBSD":
-            commands = [os.path.join(SagaUtils.sagaPath(), "saga_cmd -v")]
-        else:
-            # for Linux use just one string instead of separated parameters as the list
-            # does not work well together with shell=True option
-            # (python docs advices to use subprocess32 instead of python2.7's subprocess)
-            commands = ["saga_cmd -v"]
+        saga_executable = "saga_cmd.exe" if isWindows() else "saga_cmd"
+        saga_bin = (
+            os.path.join(SagaUtils.sagaPath(), saga_executable)
+            if SagaUtils.sagaPath()
+            else saga_executable
+        )
+        commands = [saga_bin, "-v"]
         while retries < maxRetries:
             with subprocess.Popen(
                 commands,
-                shell=True,
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 stderr=subprocess.STDOUT,
@@ -223,23 +220,18 @@ class SagaUtils:
         """
 
         if isWindows():
-            safeSagaBatchJobFilename = SagaUtils.make_path_safe(
-                SagaUtils.sagaBatchJobFilename()
-            )
-            command = ["cmd.exe", "/C ", safeSagaBatchJobFilename]
-            command = " ".join(command)
+            command = ["cmd.exe", "/C", SagaUtils.sagaBatchJobFilename()]
         else:
             os.chmod(
                 SagaUtils.sagaBatchJobFilename(),
                 stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE,
             )
-            command = ["'" + SagaUtils.sagaBatchJobFilename() + "'"]
+            command = ["/bin/sh", SagaUtils.sagaBatchJobFilename()]
         loglines = [
             QCoreApplication.translate("SagaUtils", "SAGA execution console output")
         ]
         with subprocess.Popen(
             command,
-            shell=True,
             stdout=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
