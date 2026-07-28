@@ -16,12 +16,12 @@ version=1.3.0
 author=Victor Olaya, North Road, Baswein, and QGIS Maintainers
 email=baswein@gmail.com
 
-about=<p>A QGIS plugin that allows you to run <a href="https://sourceforge.net/projects/saga-gis/">SAGA GIS</a> tools from the QGIS processing toolbox. The plugin is a bulk connection to SAGA and all tools may not work fully.</p>
-<p>If SAGA is not already on your system you must manually install a version from the <a href="https://sourceforge.net/projects/saga-gis/files/">SAGA downloads page</a> or using the osgeo4w installer. This plugin is tested on SAGA 9.2, 9.12 only but should work fine on more recent releases. If you don't want to fully install SAGA unzipping the SAGA folder to a location of your choice should work.</p>
-<p>Then in QGIS go to <strong>Settings -&gt; Options -&gt; Processing -&gt; Providers -&gt; SAGANG</strong> and point the SAGA folder to your unzipped folder containing the SAGA binaries. Hint: double click in the blank area next to the SAGA folder. Once you have the path click outside of the box before pressing ok otherwise it might not take.<br>
-If you installed SAGA in your applications on MAC the file path should be <code>/Applications/SAGA.app/Contents/MacOS</code> .<br>
-On Windows using osgeo4w: <code>C:\Users\your user name\AppData\Local\Programs\OSGeo4W\apps\saga</code></p>
-<p>This was originally part of the SEXTANTE plugin by Victor Olaya before becoming part of QGIS core until QGIS version 3.30 when it was split out as a plugin by North Road. Baswein took it over for plugin version 1.2.0 to make it available for QGIS 4 and beyond. Thank you to everyone who worked on this code over the years and the QGIS and SAGA developers for their amazing work.</p>
+about=A QGIS plugin that allows you to run <a href="https://sourceforge.net/projects/saga-gis/">SAGA GIS</a> tools from the QGIS processing toolbox. The plugin is a bulk connection to SAGA and all tools may not work fully.<br>
+    If SAGA is not already on your system you must manually install a version from the <a href="https://sourceforge.net/projects/saga-gis/files/">SAGA downloads page</a> or using the osgeo4w installer. This plugin is tested on SAGA 9.2, 9.12 only but should work fine on more recent releases. If you don't want to fully install SAGA unzipping the SAGA folder to a location of your choice should work.<br>
+    Then in QGIS go to <strong>Settings -&gt; Options -&gt; Processing -&gt; Providers -&gt; SAGANG</strong> and point the SAGA folder to your unzipped folder containing the SAGA binaries. Hint: double click in the blank area next to the SAGA folder. Once you have the path click outside of the box before pressing ok otherwise it might not take.<br>
+    If you installed SAGA in your applications on MAC the file path should be <code>/Applications/SAGA.app/Contents/MacOS</code> .<br>
+    On Windows using osgeo4w: <code>C:\Users\your user name\AppData\Local\Programs\OSGeo4W\apps\saga</code><br>
+    This was originally part of the SEXTANTE plugin by Victor Olaya before becoming part of QGIS core until QGIS version 3.30 when it was split out as a plugin by North Road. Baswein took it over for plugin version 1.2.0 to make it available for QGIS 4 and beyond. Thank you to everyone who worked on this code over the years and the QGIS and SAGA developers for their amazing work.
 
 tracker=https://github.com/baswein/qgis-processing-saga-nextgen/issues
 repository=https://github.com/baswein/qgis-processing-saga-nextgen/tree/master/processing_saga_nextgen
@@ -49,7 +49,7 @@ homepage=https://github.com/baswein/qgis-processing-saga-nextgen
 category=Plugins
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
