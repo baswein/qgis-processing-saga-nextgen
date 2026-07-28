@@ -12,7 +12,7 @@ qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
 
 description=A Processing provider for modern SAGA releases
-version=1.3.0
+version=1.3.1
 author=Victor Olaya, North Road, Baswein, and QGIS Maintainers
 email=baswein@gmail.com
 
@@ -30,7 +30,8 @@ repository=https://github.com/baswein/qgis-processing-saga-nextgen/tree/master/p
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=1.3.0 Fix shell issues, fix issue with SAGA version test, clean up unused files, improve error reporting.
+changelog=1.3.1 Get plugin website to accept
+    1.3.0 Fix shell issues, fix issue with SAGA version test, clean up unused files, improve error reporting.
     1.2.0 Add QGIS 4.x compatibility and switch repository to baswein. 
     1.1.0 Target 9.2+. Misc fixes and improvements.
     1.0.0 Target SAGA 9.1+. Allow running with older SAGA, but show warnings.
