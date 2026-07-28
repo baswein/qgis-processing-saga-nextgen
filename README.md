@@ -9,9 +9,9 @@ If SAGA is not already on your system install a version from the [SAGA downloads
 Then in QGIS go to **Settings -> Options -> Processing -> Providers -> SAGANG** and point the SAGA folder to your unzipped folder containing the SAGA binaries. Hint: double click in the blank area next to the SAGA folder. 
 If you installed SAGA in your applications on MAC the file path should be /Applications/SAGA.app/Contents/MacOS . 
 On Windows using osgeo4w: C:\Users\your user name\AppData\Local\Programs\OSGeo4W\apps\saga
-
-
 ## History
+This was originally part of the SEXTANTE plugin by Victor Olaya before becoming part of QGIS core until QGIS version 3.30 when it was split out as a plugin by North Road. Baswein took it over for version 1.2.0 to make it availble for QGIS 4 and beyond. Thank you to everyone who worked on this code over the years.
+
 
 https://docs.qgis.org/latest/en/docs/training_manual/qgis_plugins/fetching_plugins.html
 https://sourceforge.net/projects/saga-gis/
