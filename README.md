@@ -13,4 +13,4 @@ Then in QGIS go to **Settings -> Options -> Processing -> Providers -> SAGANG** 
 If you installed SAGA in your applications on MAC the file path should be /Applications/SAGA.app/Contents/MacOS . 
 On Windows using osgeo4w: C:\Users\your user name\AppData\Local\Programs\OSGeo4W\apps\saga
 ## History
-This was originally part of the SEXTANTE plugin by Victor Olaya before becoming part of QGIS core until QGIS version 3.30 when it was split out as a plugin by North Road. Baswein took it over for plugin version 1.2.0 to make it available for QGIS 4 and beyond. Thank you to everyone who worked on this code over the years.
+This was originally part of the SEXTANTE plugin by Victor Olaya before becoming part of QGIS core until QGIS version 3.30 when it was split out as a plugin by North Road. Baswein took it over for plugin version 1.2.0 to make it available for QGIS 4 and beyond. Thank you to everyone who worked on this code over the years and the QGIS and SAGA developers for their amazing work. 
