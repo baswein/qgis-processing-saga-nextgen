@@ -4,8 +4,8 @@ A QGIS plugin that allows you to run [SAGA GIS](https://sourceforge.net/projects
 ) tools from the QGIS processing toolbox. The plugin is a bulk connection to SAGA and all tools may not work fully.
 ## Installation
 ### Install Plugin
-To install the plugin search for **Processing Saga NextGen Provider** in the plugin manager in QGIS and press the install button. [Instructions]. (https://docs.qgis.org/latest/en/docs/training_manual/qgis_plugins/fetching_plugins.html 
-) Or install from zip using the zip file from the github repository releases section. 
+To install the plugin search for **Processing Saga NextGen Provider** in the plugin manager in QGIS and press the install button. [Instructions](https://docs.qgis.org/latest/en/docs/training_manual/qgis_plugins/fetching_plugins.html 
+). Or install from zip using the zip file from the github repository releases section. 
 ### Install SAGA
 If SAGA is not already on your system install a version from the [SAGA downloads page](https://sourceforge.net/projects/saga-gis/files/">https://sourceforge.net/projects/saga-gis/files/) or using the osgeo4w installer. This plugin is tested on SAGA 9.2, 9.12 only but should work fine on more recent releases. If you don't want to fully install SAGA unzipping the SAGA folder to a location of your choice should work.
 ### Connect QGIS to SAGA
