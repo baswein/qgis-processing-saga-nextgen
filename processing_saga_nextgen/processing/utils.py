@@ -17,8 +17,8 @@
 
 import os
 import platform
+import shutil
 import stat
-import subprocess
 import time
 import tempfile
 
@@ -26,7 +26,7 @@ from pathlib import Path
 
 from processing.core.ProcessingConfig import ProcessingConfig
 from processing.tools.system import isWindows, isMac, userFolder
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QProcess
 from qgis.core import Qgis, QgsApplication, QgsMessageLog
 
 
@@ -177,49 +177,31 @@ class SagaUtils:
         """
         Gets the installed SAGA version
         """
-        maxRetries = 5
-        retries = 0
         if SagaUtils._installedVersionFound and not runSaga:
             return SagaUtils._installed_version
 
         saga_executable = "saga_cmd.exe" if isWindows() else "saga_cmd"
-        saga_bin = (
-            os.path.join(SagaUtils.sagaPath(), saga_executable)
-            if SagaUtils.sagaPath()
-            else saga_executable
-        )
-        commands = [saga_bin, "-v"]
-        while retries < maxRetries:
-            with subprocess.Popen(
-                commands,
-                stdout=subprocess.PIPE,
-                stdin=subprocess.DEVNULL,
-                stderr=subprocess.STDOUT,
-                universal_newlines=True,
-            ) as proc:
-                if (
-                    isMac() or platform.system() == "FreeBSD"
-                ):  # This trick avoids having an uninterrupted system call exception if SAGA is not installed
-                    time.sleep(1)
-                try:
-                    lines = proc.stdout.readlines()
-                    for line in lines:
-                        if line.startswith("SAGA Version:"):
-                            SagaUtils._installed_version = (
-                                line[len("SAGA Version:") :].strip().split(" ")[0]
-                            )
-                            SagaUtils._installedVersionFound = True
-                            return SagaUtils._installed_version
-                    return None
-                except IOError:
-                    retries += 1
-                except Exception as e:
-                    QgsMessageLog.logMessage(
-                        f"Failed to determine installed SAGA version: {e}",
-                        "Processing",
-                        Qgis.MessageLevel.Warning,
+        saga_path = SagaUtils.sagaPath()
+        if saga_path:
+            saga_bin = os.path.abspath(os.path.join(saga_path, saga_executable))
+        else:
+            saga_bin = shutil.which(saga_executable) or saga_executable
+
+        if os.path.isabs(saga_bin) and not os.path.isfile(saga_bin):
+            saga_bin = saga_executable
+
+        proc = QProcess()
+        proc.start(saga_bin, ["-v"])
+
+        if proc.waitForFinished(5000):
+            output = str(proc.readAllStandardOutput(), "utf-8", errors="replace")
+            for line in output.splitlines():
+                if line.startswith("SAGA Version:"):
+                    SagaUtils._installed_version = (
+                        line[len("SAGA Version:") :].strip().split(" ")[0]
                     )
-                    return None
+                    SagaUtils._installedVersionFound = True
+                    return SagaUtils._installed_version
 
         return SagaUtils._installed_version
 
@@ -228,46 +210,73 @@ class SagaUtils:
         """
         Executes the saga command
         """
-
+        batch_file = os.path.abspath(SagaUtils.sagaBatchJobFilename())
         if isWindows():
-            command = ["cmd.exe", "/C", SagaUtils.sagaBatchJobFilename()]
+            program = "cmd.exe"
+            args = ["/C", batch_file]
         else:
             os.chmod(
-                SagaUtils.sagaBatchJobFilename(),
+                batch_file,
                 stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE,
             )
-            command = ["/bin/sh", SagaUtils.sagaBatchJobFilename()]
+            program = "/bin/sh"
+            args = [batch_file]
+
         loglines = [
             QCoreApplication.translate("SagaUtils", "SAGA execution console output")
         ]
-        with subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stdin=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-        ) as proc:
-            try:
-                for line in iter(proc.stdout.readline, ""):
-                    if "%" in line:
-                        s = "".join([x for x in line if x.isdigit()])
-                        try:
-                            if feedback:
-                                feedback.setProgress(int(s))
-                        except (ValueError, TypeError, AttributeError):
-                            pass
-                    else:
-                        line = line.strip()
-                        if line in ("/", "-", "\\", "|"):
-                            continue
 
-                        loglines.append(line)
-                        feedback.pushConsoleInfo(line)
-            except Exception as e:
-                if feedback:
-                    feedback.pushConsoleInfo(
-                        f"Warning: Interrupted while reading SAGA output: {e}"
-                    )
+        proc = QProcess()
+        proc.setProcessChannelMode(QProcess.MergedChannels)
+        proc.start(program, args)
+
+        try:
+            while proc.state() == QProcess.Running or proc.bytesAvailable() > 0:
+                if feedback and feedback.isCanceled():
+                    proc.kill()
+                    break
+
+                if proc.waitForReadyRead(500):
+                    while proc.canReadLine():
+                        line = str(proc.readLine(), "utf-8", errors="replace").strip()
+                        if "%" in line:
+                            s = "".join([x for x in line if x.isdigit()])
+                            try:
+                                if feedback and s:
+                                    feedback.setProgress(int(s))
+                            except (ValueError, TypeError, AttributeError):
+                                pass
+                        else:
+                            if line in ("/", "-", "\\", "|"):
+                                continue
+
+                            loglines.append(line)
+                            if feedback:
+                                feedback.pushConsoleInfo(line)
+                elif proc.state() != QProcess.Running:
+                    # Read any remaining standard output after process terminates
+                    output = str(proc.readAllStandardOutput(), "utf-8", errors="replace")
+                    for line in output.splitlines():
+                        line = line.strip()
+                        if "%" in line:
+                            s = "".join([x for x in line if x.isdigit()])
+                            try:
+                                if feedback and s:
+                                    feedback.setProgress(int(s))
+                            except (ValueError, TypeError, AttributeError):
+                                pass
+                        elif line and line not in ("/", "-", "\\", "|"):
+                            loglines.append(line)
+                            if feedback:
+                                feedback.pushConsoleInfo(line)
+                    break
+        except Exception as e:
+            if feedback:
+                feedback.pushConsoleInfo(
+                    f"Warning: Interrupted while reading SAGA output: {e}"
+                )
+
+        proc.waitForFinished()
 
         if ProcessingConfig.getSetting(SagaUtils.SAGA_LOG_CONSOLE):
             QgsMessageLog.logMessage(
