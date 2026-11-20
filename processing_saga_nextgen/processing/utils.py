@@ -19,15 +19,27 @@ import os
 import platform
 import stat
 import subprocess
-import time
+import sys
 import tempfile
+import time
 
 from pathlib import Path
 
 from processing.core.ProcessingConfig import ProcessingConfig
-from processing.tools.system import isWindows, isMac, userFolder
 from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import Qgis, QgsApplication, QgsMessageLog
+from qgis.core import Qgis, QgsApplication, QgsMessageLog, QgsProcessingUtils
+
+
+def isWindows():
+    return sys.platform.startswith("win") or sys.platform.startswith("cygwin")
+
+
+def isMac():
+    return sys.platform == "darwin"
+
+
+def userFolder():
+    return QgsProcessingUtils.userFolder()
 
 
 class SagaUtils:

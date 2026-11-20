@@ -154,7 +154,9 @@ class SagaAlgorithm(SagaAlgorithmBase):
                 if line.startswith("Hardcoded"):
                     self.hardcoded_strings.append(line[len("Hardcoded|") :])
                 elif Parameters.is_parameter_line(line):
-                    self.params.append(Parameters.create_parameter_from_line(line))
+                    param = Parameters.create_parameter_from_line(line)
+                    if param is not None:
+                        self.params.append(param)
                 elif line.startswith("AllowUnmatching"):
                     self.allow_nonmatching_grid_extents = True
                 else:
