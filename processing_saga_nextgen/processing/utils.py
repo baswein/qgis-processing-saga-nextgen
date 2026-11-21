@@ -201,6 +201,7 @@ class SagaUtils:
             else saga_executable
         )
         commands = [saga_bin, "-v"]
+        creation_flags = subprocess.CREATE_NO_WINDOW if isWindows() else 0
         while retries < maxRetries:
             with subprocess.Popen(
                 commands,
@@ -208,6 +209,7 @@ class SagaUtils:
                 stdin=subprocess.DEVNULL,
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
+                creationflags=creation_flags,
             ) as proc:
                 if (
                     isMac() or platform.system() == "FreeBSD"
@@ -252,12 +254,14 @@ class SagaUtils:
         loglines = [
             QCoreApplication.translate("SagaUtils", "SAGA execution console output")
         ]
+        creation_flags = subprocess.CREATE_NO_WINDOW if isWindows() else 0
         with subprocess.Popen(
             command,
             stdout=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
             universal_newlines=True,
+            creationflags=creation_flags,
         ) as proc:
             try:
                 for line in iter(proc.stdout.readline, ""):
