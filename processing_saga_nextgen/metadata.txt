@@ -17,7 +17,7 @@ author=Victor Olaya, North Road, Baswein, and QGIS Maintainers
 email=baswein@gmail.com
 
 about=A QGIS plugin that allows you to run <a href="https://sourceforge.net/projects/saga-gis/">SAGA GIS</a> tools from the QGIS processing toolbox. The plugin is a bulk connection to SAGA and all tools may not work fully.<br>
-    If SAGA is not already on your system you must manually install a version from the <a href="https://sourceforge.net/projects/saga-gis/files/">SAGA downloads page</a> or using the osgeo4w installer. This plugin is tested on SAGA 9.2, 9.12 only but should work fine on more recent releases. If you don't want to fully install SAGA unzipping the SAGA folder to a location of your choice should work.<br>
+    If SAGA is not already on your system you must manually install a version from the <a href="https://sourceforge.net/projects/saga-gis/files/">SAGA downloads page</a> or using the osgeo4w installer. This plugin is tested on SAGA 9.2, 9.12, 9.14 only but should work fine on more recent releases. If you don't want to fully install SAGA unzipping the SAGA folder to a location of your choice should work.<br>
     Then in QGIS go to <strong>Settings -&gt; Options -&gt; Processing -&gt; Providers -&gt; SAGANG</strong> and point the SAGA folder to your unzipped folder containing the SAGA binaries. Hint: double click in the blank area next to the SAGA folder. Once you have the path click outside of the box before pressing ok otherwise it might not take.<br>
     If you installed SAGA in your applications on MAC the file path should be <code>/Applications/SAGA.app/Contents/MacOS</code> .<br>
     On Windows using osgeo4w: <code>C:\Users\your user name\AppData\Local\Programs\OSGeo4W\apps\saga</code><br>
@@ -30,7 +30,7 @@ repository=https://github.com/baswein/qgis-processing-saga-nextgen/tree/master/p
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=1.3.1 Get plugin website to accept
+changelog=1.3.1 Get plugin website to accept, QGIS 4.4.0 compatibility, SAGA 9.14 compatibility. There is still a known cosmetic issue that the SAGA icon on macs shows in the taskbar when running a tool.   
     1.3.0 Fix shell issues, fix issue with SAGA version test, clean up unused files, improve error reporting.
     1.2.0 Add QGIS 4.x compatibility and switch repository to baswein. 
     1.1.0 Target 9.2+. Misc fixes and improvements.
