@@ -236,7 +236,7 @@ class SagaUtils:
         commands = [saga_bin, "-v"]
         creation_flags = subprocess.CREATE_NO_WINDOW if isWindows() else 0
         while retries < maxRetries:
-            with subprocess.Popen(
+            with subprocess.Popen( # nosec B603, B607
                 commands,
                 stdout=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
@@ -288,7 +288,7 @@ class SagaUtils:
             QCoreApplication.translate("SagaUtils", "SAGA execution console output")
         ]
         creation_flags = subprocess.CREATE_NO_WINDOW if isWindows() else 0
-        with subprocess.Popen(
+        with subprocess.Popen( # nosec B603, B607
             command,
             stdout=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
