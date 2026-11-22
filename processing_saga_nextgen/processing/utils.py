@@ -106,13 +106,15 @@ class SagaUtils:
         """
         folder = None
         if isMac() or platform.system() == "FreeBSD":
-            testfolder = os.path.join(QgsApplication.prefixPath(), "bin")
-            if os.path.exists(os.path.join(testfolder, "saga_cmd")):
-                folder = testfolder
-            else:
-                testfolder = "/usr/local/bin"
+            testfolders = [
+                os.path.join(QgsApplication.prefixPath(), "bin"),
+                "/Applications/SAGA.app/Contents/MacOS",
+                "/usr/local/bin",
+            ]
+            for testfolder in testfolders:
                 if os.path.exists(os.path.join(testfolder, "saga_cmd")):
                     folder = testfolder
+                    break
         elif isWindows():
             folders = []
             folders.append(
@@ -157,28 +159,59 @@ class SagaUtils:
         return os.path.join(os.path.dirname(__file__), "..", "description")
 
     @staticmethod
+    def findToolsFolder():
+        """
+        Tries to find the SAGA tool/module libraries folder
+        """
+        saga_path = SagaUtils.sagaPath()
+        if not saga_path:
+            return ""
+
+        candidates = [
+            os.path.join(saga_path, "..", "Tools"),  # macOS SAGA.app bundle
+            os.path.join(saga_path, "..", "tools"),
+            os.path.join(saga_path, "tools"),        # Windows / Linux SAGA 9+
+            os.path.join(saga_path, "modules"),      # Windows / Linux older SAGA
+            os.path.join(saga_path, "..", "lib", "saga"),  # Unix prefix install (/usr/local/bin -> /usr/local/lib/saga)
+            os.path.join(saga_path, "lib", "saga"),
+        ]
+        for candidate in candidates:
+            if os.path.isdir(candidate):
+                return os.path.normpath(candidate)
+        return ""
+
+    @staticmethod
     def createSagaBatchJobFileFromSagaCommands(commands):
         """
         Creates a batch job file from a list of SAGA commands
         """
+        tools_folder = SagaUtils.findToolsFolder()
         with open(SagaUtils.sagaBatchJobFilename(), "w", encoding="utf8") as fout:
             if isWindows():
                 fout.write("set SAGA=" + SagaUtils.sagaPath() + "\n")
-                fout.write(
-                    "set SAGA_MLB="
-                    + os.path.join(SagaUtils.sagaPath(), "modules")
-                    + "\n"
-                )
-                fout.write("PATH=%PATH%;%SAGA%;%SAGA_MLB%\n")
+                if tools_folder:
+                    fout.write("set SAGA_TLB=" + tools_folder + "\n")
+                    fout.write("set SAGA_MLB=" + tools_folder + "\n")
+                    fout.write("PATH=%PATH%;%SAGA%;%SAGA_TLB%\n")
+                else:
+                    legacy_mlb = os.path.join(SagaUtils.sagaPath(), "modules")
+                    fout.write("set SAGA_MLB=" + legacy_mlb + "\n")
+                    fout.write("PATH=%PATH%;%SAGA%;%SAGA_MLB%\n")
             elif isMac() or platform.system() == "FreeBSD":
-                fout.write(
-                    "export SAGA_MLB="
-                    + os.path.join(SagaUtils.sagaPath(), "../lib/saga")
-                    + "\n"
-                )
+                if tools_folder:
+                    fout.write('export SAGA_TLB="' + tools_folder + '"\n')
+                    fout.write('export SAGA_MLB="' + tools_folder + '"\n')
+                else:
+                    fout.write(
+                        'export SAGA_MLB="'
+                        + os.path.join(SagaUtils.sagaPath(), "../lib/saga")
+                        + '"\n'
+                    )
                 fout.write("export PATH=" + SagaUtils.sagaPath() + ":$PATH\n")
             else:
-                pass
+                if tools_folder:
+                    fout.write('export SAGA_TLB="' + tools_folder + '"\n')
+                    fout.write('export SAGA_MLB="' + tools_folder + '"\n')
             for command in commands:
                 fout.write("saga_cmd " + command + "\n")
 
