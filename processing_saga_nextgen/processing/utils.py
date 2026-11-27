@@ -39,7 +39,12 @@ def isMac():
 
 
 def userFolder():
-    return QgsProcessingUtils.userFolder()
+    # QGIS 4.4 moved userFolder() into QgsProcessingUtils and removed the Python helper from processing.tools.system.
+    if hasattr(QgsProcessingUtils, "userFolder"):
+        return QgsProcessingUtils.userFolder()
+    from processing.tools.system import userFolder as legacyUserFolder
+
+    return legacyUserFolder()
 
 
 class SagaUtils:
